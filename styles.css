@@ -23,7 +23,10 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100%;
 }
+
+/* Home Page */
 
 #rules {
   display: flex;
@@ -54,7 +57,6 @@ main {
 .category {
   margin-bottom: 2%;
   cursor: pointer;
-  transition: background-color 0.1s ease;
   width: 40%;
   height: 100%;
   text-align: center;
@@ -68,4 +70,103 @@ main {
 .category:hover {
   background-color: #ebb920;
   border: 2px solid #d5a209;
+}
+
+/* Quiz Page */
+
+#quiz {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+}
+
+span {
+  text-align: center;
+}
+
+#top_quiz {
+  width: 100%;
+  font-weight: 800;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-bottom: 2%;
+}
+
+#total_questions, 
+#score {
+  border: 2px solid black;
+  padding: 1%;
+  background-color: white;
+  border-radius: 12px;
+  width: 10%;
+}
+
+#timer {
+  background-color: #ebb920;
+  border: 2px solid #d5a209;
+  padding: 1%;
+  border-radius: 12px;
+  width: 10%;
+}
+
+#bottom_quiz {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  padding: 3%;
+  margin-top: 1%;
+  width: 63%;
+  border: 2px solid black;
+}
+
+h3 {
+  margin-top: 0;
+  margin-bottom: 5%;
+}
+
+#answers {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 20px;
+  row-gap: 20px;
+  width: 100%;
+  margin-bottom: 3%;
+}
+
+.answer {
+  margin-bottom: 2%;
+  cursor: pointer;
+  text-align: center;
+  padding: 1%;
+  border-radius: 12px;
+  background-color: #40aad6;
+  border: 2px solid #137fad;
+}
+
+.answer:hover {
+  background-color: #ebb920;
+  border: 2px solid #d5a209;
+}
+
+button {
+  padding: 2% 5%;
+  cursor: pointer;
+  background-color: #ebb920;
+  border: 2px solid #d5a209;
+  font-weight: 800;
+  border-radius: 12px;
+}
+
+button:hover {
+  background-color: #c59a18;
+  border: 2px solid #aa861a;
+}
+
+#result {
+  margin-top: 2%;
 }

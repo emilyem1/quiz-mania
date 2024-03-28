@@ -17,7 +17,7 @@
     <img id="logo" src="assets/header.png" alt="Quiz Mania">
   </header>
   <main>
-    <div id="rules">
+    <!-- <div id="rules">
       <h1> Welcome to Quiz Mania!</h1>
       <p>Are you ready to put your knowledge to the test in a thrilling race against the clock? With each correct answer you'll get a point! Run out of time, or answer incorrectly, and you will not recieve a point. See how many points you can collect before the quiz is over!</p>
       <h2> Click on a category below to get started!</h2>
@@ -26,6 +26,25 @@
       <label id="movies" class="category">Movies</label>
       <label id="music" class="category">Music</label>
       <label id="games" class="category">Video Games</label>
+    </div> -->
+    <div id="quiz">
+      <div id="top_quiz">
+        <span id="total_questions">0/5 Questions</span>
+        <span id="timer">Timer: 15 S</span>
+        <span id="score">Score: 0</span>
+      </div>
+      <!-- <span id="timer">Timer: 15 S</span> -->
+      <div id="bottom_quiz">
+        <h3 id="question">This a question, so what is your answer huh?</h3>
+        <div id="answers">
+          <span class="answer">Answer 1</span>
+          <span class="answer">Answer 2</span>
+          <span class="answer">Answer 3</span>
+          <span class="answer">Answer 4</span>
+        </div>
+        <button>SUBMIT</button>
+        <span id="result">CORRECT +1 point 🎉</span>
+      </div>
     </div>
   </main>
 </body>
