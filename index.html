@@ -34,20 +34,22 @@
         <div id="top_quiz">
           <span id="total_questions"></span>
           <span id="timer"></span>
-          <span id="score">Score: 0</span>
+          <span id="score"></span>
         </div>
         <div id="bottom_quiz">
           <h3 id="question"></h3>
           <div id="answers">
-            <span class="answer"></span>
-            <span class="answer"></span>
-            <span class="answer"></span>
-            <span class="answer"></span>
+            <span class="answer" id="one"></span>
+            <span class="answer" id="two"></span>
+            <span class="answer" id="three"></span>
+            <span class="answer" id="four"></span>
           </div>
           <button id="submit" style="display: block;">SUBMIT</button>
           <button id="next" style="display: none;">NEXT</button>
           <span id="correct" style="display: none;">CORRECT +1 point 🎉</span>
           <span id="incorrect" style="display: none;">INCORRECT +0 points 😔</span>
+          <span id="timeout" style="display: none;">TIMES UP +0 points 😔</span>
+          <span id="end" style="display: none;"></span>
         </div>
         <button id="return" class="category">Return</button>
       </div>
