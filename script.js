@@ -34,7 +34,7 @@ const customQuestions = [
   }, 
 ]
 
-// Choosing appropriate question with category
+// Choosing appropriate category for custom questions
 const pickCustomQuestion = (category) => {
   for (let i = 0; i < customQuestions.length; i++) {
     if (category === customQuestions[i].value) {
@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const incorrectElement = document.getElementById('incorrect');
   const endElement = document.getElementById('end');
   const timeoutElement = document.getElementById('timeout');
+  const imageElement = document.getElementById('photo');
 
   // Push quiz objects into quiz.questions
   const quizObjects = (array) => {
@@ -82,7 +83,6 @@ document.addEventListener("DOMContentLoaded", function() {
         correct: question.correct_answer,
         incorrect: true,
         image: question.image,
-        proof: console.log("The image: ", question.image)
       }
     }
     return {
@@ -97,12 +97,25 @@ document.addEventListener("DOMContentLoaded", function() {
       const response = await fetch(`https://opentdb.com/api.php?amount=4&category=${categoryChosen}&difficulty=easy&type=multiple`);
       const data = await response.json();
       quizObjects(data.results);
-      console.log("Quiz questions", quiz.questions)
       newQuestion();
     } catch (error) {
       console.error('Error fetching trivia questions:', error);
     }
   };
+
+  // If question has image
+  const hasImage = (question) => {
+    if (!question.image) return
+    imageElement.src = question.image;
+    imageElement.style.display = "block";
+  }
+
+  // Decode html from api
+  const decodeHtml = (html) => {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+  }
 
   // Quiz logic
   const newQuestion = () => {
@@ -115,7 +128,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     // Array of the 5 questions
     remainingQuestions = quiz.questions;
-    console.log("Remaining questions:", remainingQuestions);
     // Update progress
     quiz.progress++;
     progressElement.textContent = `${quiz.progress} / 5 Questions`;
@@ -124,16 +136,22 @@ document.addEventListener("DOMContentLoaded", function() {
     // Find question
     const index = Math.floor(Math.random() * remainingQuestions.length);
     currentQuestion = remainingQuestions[index];
-    questionElement.textContent = currentQuestion.question;
+    const decodedQuestion = decodeHtml(currentQuestion.question);
+    questionElement.textContent = decodedQuestion;
+    // Reset if previous question had image
+    imageElement.style.display = "none";
+    imageElement.src = "";
+    // Get image if it contains one
+    hasImage(currentQuestion);
     // Populate answers
     let answers = getAnswers(currentQuestion);
-    console.log("All Answers:", answers.allAnswers);
-    console.log("Correct Answer:", answers.correct);
     answers.allAnswers = shuffleArray(answers.allAnswers);
     answersElement.forEach((answer, index) => {
-      answer.textContent = answers.allAnswers[index];
+      // Decode HTML entities in the answer text
+      const decodedAnswer = decodeHtml(answers.allAnswers[index]);
+      answer.textContent = decodedAnswer;
     });
-    // Remove current question from aray
+    // Remove current question from array
     remainingQuestions.splice(index, 1);
     // Reset
     acceptingInput = true;
@@ -188,7 +206,6 @@ document.addEventListener("DOMContentLoaded", function() {
       if (acceptingInput) {
         selectedAnswer = event.target.innerText;
         let id = event.target.id;
-        console.log("Selected answer:", selectedAnswer);
         highlightSelected(id);
       } 
     });
@@ -251,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   };
 
-  // Timer + Autofail condition
+  // Timer
   const timer = (seconds) => {
     if (seconds > 0) {
       timerElement.textContent = `Timer: ${seconds}`;
@@ -283,6 +300,7 @@ document.addEventListener("DOMContentLoaded", function() {
     clearInterval(intervalId);
     isItCorrect(selectedAnswer); 
     revealAnswers(selectedAnswer);
+    acceptingInput = false;
   });
 
   // Click for next button
