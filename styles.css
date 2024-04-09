@@ -200,3 +200,38 @@ button:hover {
 #timeout {
   margin-top: 2%;
 }
+
+/* Media Queries */
+
+@media screen and (max-width: 1160px) {
+  #total_questions,
+  #timer,
+  #score,
+  #return {
+    min-width: 125px;
+  }
+}
+
+@media screen and (max-width: 826px) {
+  #logo,
+  #rules,
+  #categories,
+  #movies,
+  #music,
+  #games {
+    min-width: 324px;
+  }
+  #bottom_quiz {
+    min-width: 340px;
+  }
+  #top_quiz {
+    display: flex;
+    flex-direction: column;
+  }
+  #timer {
+    margin: 10px 0;
+  }
+  #return {
+    margin-top: 10px;
+  }
+}
