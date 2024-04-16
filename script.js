@@ -295,12 +295,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Click for submit button
   submitElement.addEventListener('click', function() {
-    submitElement.style.display = "none";
-    nextElement.style.display = "block";
-    clearInterval(intervalId);
-    isItCorrect(selectedAnswer); 
-    revealAnswers(selectedAnswer);
-    acceptingInput = false;
+    if (selectedAnswer !== "") {
+      submitElement.style.display = "none";
+      nextElement.style.display = "block";
+      clearInterval(intervalId);
+      isItCorrect(selectedAnswer); 
+      revealAnswers(selectedAnswer);
+      acceptingInput = false;
+    }
   });
 
   // Click for next button
@@ -309,6 +311,7 @@ document.addEventListener("DOMContentLoaded", function() {
     nextElement.style.display = "none";
     clearInterval(intervalId); 
     timer(20); // Restart the timer
+    selectedAnswer = "";
     timerElement.style.backgroundColor = "#ebb920";
     timerElement.style.setProperty('border', '2px solid #d5a209');
     resetAnswerStyles();
