@@ -39,16 +39,6 @@ const customQuestions = [
   }, 
 ];
 
-// Choosing appropriate category for custom questions
-const pickCustomQuestion = (category) => {
-  for (let i = 0; i < customQuestions.length; i++) {
-    if (category === customQuestions[i].value) {
-      quiz.questions.push(customQuestions[i]);
-      break;
-    }
-  }
-};
-
 document.addEventListener("DOMContentLoaded", function() {
   // Page toggle elements
   const category = document.querySelectorAll('.category');
@@ -68,6 +58,16 @@ document.addEventListener("DOMContentLoaded", function() {
   const endElement = document.getElementById('end');
   const timeoutElement = document.getElementById('timeout');
   const imageElement = document.getElementById('photo');
+
+  // Choosing appropriate category for custom questions
+  const pickCustomQuestion = (category) => {
+    for (let i = 0; i < customQuestions.length; i++) {
+      if (category === customQuestions[i].value) {
+        quiz.questions.push(customQuestions[i]);
+        break;
+      }
+    }
+  };
 
   // Push quiz objects into quiz.questions
   const quizObjects = (array) => {
