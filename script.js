@@ -2,12 +2,17 @@
 let quiz = {
   score: 0,
   questions: [],
-  progress: 0
+  progress: 0,
+  currentQuestion: {},
+  acceptingInput: true,
+  selectedAnswer: "",
+  categoryChosen: "",
 };
 
-let currentQuestion = {};
-let acceptingInput = true;
-let selectedAnswer = "";
+let currentQuestion = quiz.currentQuestion;
+let acceptingInput = quiz.acceptingInput;
+let selectedAnswer = quiz.selectedAnswer;
+let categoryChosen = quiz.categoryChosen;
 
 // Custom questions with pictures
 const customQuestions = [
@@ -32,7 +37,7 @@ const customQuestions = [
     correct_answer: "Sly, Bentley & Murray",
     incorrect_answers: [ "Mask, Lens & Muscle", "Ronaldo, Shellz & Doppi", "Sneak, Fred & Little" ]
   }, 
-]
+];
 
 // Choosing appropriate category for custom questions
 const pickCustomQuestion = (category) => {
@@ -42,7 +47,7 @@ const pickCustomQuestion = (category) => {
       break;
     }
   }
-}
+};
 
 document.addEventListener("DOMContentLoaded", function() {
   // Page toggle elements
@@ -50,7 +55,6 @@ document.addEventListener("DOMContentLoaded", function() {
   const showElement = document.getElementById('showOnLabelClick');
   const hideElement = document.getElementById('hideOnLabelClick');
   const returnElement = document.getElementById('return');
-  let categoryChosen = "";
   // Quiz elements
   const timerElement = document.getElementById('timer');
   const submitElement = document.getElementById('submit');
@@ -103,20 +107,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   };
 
-  // If question has image
-  const hasImage = (question) => {
-    if (!question.image) return
-    imageElement.src = question.image;
-    imageElement.style.display = "block";
-  }
-
-  // Decode html from api
-  const decodeHtml = (html) => {
-    const txt = document.createElement("textarea");
-    txt.innerHTML = html;
-    return txt.value;
-  }
-
   // Quiz logic
   const newQuestion = () => {
     if (quiz.progress >= 5) {
@@ -124,10 +114,11 @@ document.addEventListener("DOMContentLoaded", function() {
       showElement.style.display = "none";
       hideElement.style.display = "flex";
       // Reset timer
-      clearInterval(intervalId); 
+      clearInterval(intervalId);
+      resetQuizElements();
     }
     // Array of the 5 questions
-    remainingQuestions = quiz.questions;
+    let remainingQuestions = quiz.questions;
     // Update progress
     quiz.progress++;
     progressElement.textContent = `${quiz.progress} / 5 Questions`;
@@ -159,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function() {
     incorrectElement.style.display = "none";
     endElement.style.display = "none";
     timeoutElement.style.display = "none";
-  }
+  };
 
   // Function to shuffle the answers array
   const shuffleArray = (array) => {
@@ -168,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function() {
       [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
-  }
+  };
   
   // Toggle between pages
   category.forEach(label => {
@@ -200,8 +191,33 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
+  // Timer
+  const timer = (seconds) => {
+    if (seconds > 0) {
+      timerElement.textContent = `Timer: ${seconds}`;
+      intervalId = setInterval(() => {
+        seconds--;
+        timerElement.textContent = `Timer: ${seconds}`;
+        if (seconds <= 0) {
+          // Time is up!
+          clearInterval(intervalId);
+          timerElement.style.backgroundColor = "#c84343";
+          timerElement.style.setProperty('border', '2px solid #9b2b2b');
+          timerElement.textContent = 'TIME IS UP!';
+          // Remove submit button
+          submitElement.style.display = "none";
+          nextElement.style.display = "block";
+          acceptingInput = false;
+          // Timeout message
+          revealAnswers(selectedAnswer);
+          timeoutElement.style.display = "block";
+        }
+      }, 1000);
+    }
+  };
+
   // Selecting an answer
-  answersElement.forEach((answer, index) => {
+  answersElement.forEach((answer) => {
     answer.addEventListener('click', function(event) {
       if (acceptingInput) {
         selectedAnswer = event.target.innerText;
@@ -210,26 +226,6 @@ document.addEventListener("DOMContentLoaded", function() {
       } 
     });
   });
-
-  // Results & updating score
-  const isItCorrect = (answer) => {
-    let answers = getAnswers(currentQuestion);
-    if (answer === answers.correct && quiz.progress >= 5) {
-      quiz.score++
-      correctElement.style.display = "block";
-      endElement.textContent = `FINAL SCORE: ${quiz.score}`;
-      endElement.style.display = "block";
-    } else if (answer === answers.correct) {
-      quiz.score++
-      correctElement.style.display = "block";
-    } else if (answer !== answers.correct && quiz.progress >= 5) {
-      incorrectElement.style.display = "block";
-      endElement.textContent = `FINAL SCORE: ${quiz.score}`;
-      endElement.style.display = "block";
-    } else {
-      incorrectElement.style.display = "block";
-    }
-  };
 
   // Highlight the selected answer
   const highlightSelected = (id) => {
@@ -260,6 +256,26 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   };
 
+  // Results & updating score
+  const isItCorrect = (answer) => {
+    let answers = getAnswers(currentQuestion);
+    if (answer === answers.correct && quiz.progress >= 5) {
+      quiz.score++
+      correctElement.style.display = "block";
+      endElement.textContent = `FINAL SCORE: ${quiz.score}`;
+      endElement.style.display = "block";
+    } else if (answer === answers.correct) {
+      quiz.score++
+      correctElement.style.display = "block";
+    } else if (answer !== answers.correct && quiz.progress >= 5) {
+      incorrectElement.style.display = "block";
+      endElement.textContent = `FINAL SCORE: ${quiz.score}`;
+      endElement.style.display = "block";
+    } else {
+      incorrectElement.style.display = "block";
+    }
+  };
+
   // Reset answer styles when clicking next
   const resetAnswerStyles = () => {
     answersElement.forEach((answer) => {
@@ -268,29 +284,26 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   };
 
-  // Timer
-  const timer = (seconds) => {
-    if (seconds > 0) {
-      timerElement.textContent = `Timer: ${seconds}`;
-      intervalId = setInterval(() => {
-        seconds--;
-        timerElement.textContent = `Timer: ${seconds}`;
-        if (seconds <= 0) {
-          // Time is up!
-          clearInterval(intervalId);
-          timerElement.style.backgroundColor = "#c84343";
-          timerElement.style.setProperty('border', '2px solid #9b2b2b');
-          timerElement.textContent = 'TIME IS UP!';
-          // Remove submit button
-          submitElement.style.display = "none";
-          nextElement.style.display = "block";
-          acceptingInput = false;
-          // Timeout message
-          revealAnswers(selectedAnswer);
-          timeoutElement.style.display = "block";
-        }
-      }, 1000);
-    }
+  // Reset quiz elements
+  const resetQuizElements = () => {
+    answersElement.forEach((answer) => {
+      answer.textContent = "";
+    });
+    questionElement.textContent = "";
+  };
+
+  // If question has image
+  const hasImage = (question) => {
+    if (!question.image) return
+    imageElement.src = question.image;
+    imageElement.style.display = "block";
+  };
+
+  // Decode html from api
+  const decodeHtml = (html) => {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
   };
 
   // Click for submit button
@@ -309,8 +322,9 @@ document.addEventListener("DOMContentLoaded", function() {
   nextElement.addEventListener('click', function() {
     submitElement.style.display = "block";
     nextElement.style.display = "none";
+    timeoutElement.style.display = "none";
     clearInterval(intervalId); 
-    timer(20); // Restart the timer
+    timer(20);
     selectedAnswer = "";
     timerElement.style.backgroundColor = "#ebb920";
     timerElement.style.setProperty('border', '2px solid #d5a209');
@@ -327,12 +341,13 @@ document.addEventListener("DOMContentLoaded", function() {
     correctElement.style.display = "none";
     incorrectElement.style.display = "none";
     endElement.style.display = "none";
-    timeoutElement.style.display = "block";
+    timeoutElement.style.display = "none";
     quiz = {
       score: 0,
       questions: [],
       progress: 0
     };
     currentQuestion = {};
+    resetQuizElements();
   });
 });
